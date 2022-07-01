@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     private float lookSpeed = 2;
     [SerializeField]
     private float lookXLimit = 45;
+    
   
 
     CharacterController characterController;
@@ -58,17 +59,19 @@ public class PlayerController : MonoBehaviour
             moveDirection.y -= gravity * Time.deltaTime;
         }
         characterController.Move(moveDirection * Time.deltaTime);
-        if (canMove)
-        {
-            rotationX += -Input.GetAxis("Mouse Y") * lookSpeed;
-            rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
-            playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
-            transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
-        }
+       
+        rotationX += -Input.GetAxis("Mouse Y") * lookSpeed;
+        rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
+        playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
+        transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
+
+        
+
         if (Input.GetMouseButtonDown(0))
         {
             thePosition = playerCamera.transform.TransformPoint(Vector3.forward * 2);
             Instantiate(bullet, thePosition, bullet.transform.rotation);
         }
     }
+    
 }
