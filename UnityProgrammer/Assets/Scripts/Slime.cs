@@ -1,20 +1,45 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
-public class Slime : MonoBehaviour
+//Inheritance
+public abstract class Slime : MonoBehaviour
 {
-    
+    private bool _isAbilityActive = false;
+    public bool isAbilityActive { 
+        get { return _isAbilityActive; }
+        set 
+        { 
+            _isAbilityActive = value;
+            if (_isAbilityActive)
+            {
+                SpecialAbility();
+            }
+            else
+            {
+                SpecialAbilityDisable();
+            }
+        }
+    }
     protected int maxHp;
     protected int jumpSpeed;
-    protected int jumpCooldown;
+    protected float jumpCooldown;
+    protected int specialAbilityRange;
+    private static int _score;
     //Encapsulation
-    public static int score { get; protected set; }
+    public static int score { 
+        get { return _score; } 
+        protected set 
+        {
+            _score = value;
+            GameObject.Find("Canvas").transform.Find("ScorePanel").GetComponent<TextMeshProUGUI>().text = "Score: " + score;
+        } 
+    }
     protected bool hasJumpReady = true;
-    [SerializeField]
     protected GameObject player;
-    [SerializeField]
     protected Rigidbody rb;
+
 
     // Start is called before the first frame update
     void Start()
@@ -31,25 +56,47 @@ public class Slime : MonoBehaviour
             hasJumpReady = false;
             StartCoroutine(JumpCoolDown());
         }
+        if ((player.transform.position - transform.position).magnitude < specialAbilityRange)
+        {
+            isAbilityActive = true;
+        }
+        else
+        {
+            isAbilityActive = false;
+        }
         
     }
-    public void Jump()
+    void Jump()
     {
 
         Vector3 vectorToPlayer = player.transform.position - transform.position;
         vectorToPlayer.Normalize();
-        rb.AddForce(vectorToPlayer * jumpSpeed);
-        rb.AddForce(Vector3.up * jumpSpeed / 3);
-
-        //Vector3 axis = Vector3.Cross(vectorToPlayer, new Vector3(1, 0, 1));
-        //gameObject.GetComponent<Rigidbody>().AddForce(Quaternion.AngleAxis(55, axis) * vectorToPlayer * jumpSpeed, ForceMode.Impulse);
+        rb.AddForce(vectorToPlayer * jumpSpeed, ForceMode.VelocityChange);
+        rb.AddForce(Vector3.up * jumpSpeed, ForceMode.VelocityChange);
     }
     
-    public IEnumerator JumpCoolDown()
+    IEnumerator JumpCoolDown()
     {
         yield return new WaitForSeconds(jumpCooldown);
         hasJumpReady = true;
         yield return null;
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Destroy(other.gameObject);
+        maxHp -= 1;
+        if (maxHp <= 0)
+        {
+            score += 50;
+            SpecialAbilityDisable();
+            Destroy(gameObject);
+        }
+    }
+    //Polymorphism
+    protected abstract void SpecialAbility();
+
+    protected abstract void SpecialAbilityDisable();
+
 
 }

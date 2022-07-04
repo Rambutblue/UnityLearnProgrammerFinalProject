@@ -1,15 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
-    private float walkSpeed = 7;
-    [SerializeField]
-    private float runSpeed = 11;
-    [SerializeField]
-    private float jumpSpeed = 8;
+    public int playerHp { get; private set; } = 5;
+    public float walkSpeed_base { get; } = 7;   
+    public float walkSpeed = 7;
+    public float runSpeed_base { get; } = 11;
+    public float runSpeed = 11;
+    public float jumpSpeed_base { get; } = 8;
+    public float jumpSpeed = 8;
     [SerializeField]
     private float gravity = 20;
     public Camera playerCamera;
@@ -18,7 +22,9 @@ public class PlayerController : MonoBehaviour
     private float lookSpeed = 2;
     [SerializeField]
     private float lookXLimit = 45;
-    
+    public GameObject GameOverPanel;
+    public GameObject HpPanel;
+    public GameObject RestartButton;
   
 
     CharacterController characterController;
@@ -73,5 +79,34 @@ public class PlayerController : MonoBehaviour
             Instantiate(bullet, thePosition, bullet.transform.rotation);
         }
     }
-    
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.tag == "Enemy")
+        {
+            playerHp -= 1;
+            Debug.Log(playerHp);
+            HpPanel.GetComponent<TextMeshProUGUI>().text = "Hp: " + playerHp;
+        }
+        if (playerHp <= 0)
+        {
+            Debug.Log("GameOver!");
+            GameOver();
+        }
+    }
+    //Abstraction
+    private void GameOver()
+    {
+
+        GameOverPanel.SetActive(true);
+        RestartButton.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        lookSpeed = 0;
+        Time.timeScale = 0;
+        bullet = null;
+    }
+    public void Restart()
+    {
+        SceneManager.LoadScene(0);
+    }
 }

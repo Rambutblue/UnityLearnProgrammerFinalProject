@@ -359,6 +359,8 @@
 "Assets/Scripts/PlayerController.cs"
 "Assets/Scripts/Projectile.cs"
 "Assets/Scripts/Slime.cs"
+"Assets/Scripts/SpawnManager.cs"
+"Assets/Scripts/VikingSlime.cs"
 -langversion:9.0
 
 /deterministic
