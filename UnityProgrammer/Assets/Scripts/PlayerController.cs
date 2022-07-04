@@ -19,13 +19,13 @@ public class PlayerController : MonoBehaviour
     public Camera playerCamera;
     public GameObject bullet;
     [SerializeField]
-    private float lookSpeed = 2;
+    public float lookSpeed = 2;
     [SerializeField]
     private float lookXLimit = 45;
     public GameObject GameOverPanel;
     public GameObject HpPanel;
     public GameObject RestartButton;
-  
+    public bool isGameActive = true;
 
     CharacterController characterController;
     Vector3 moveDirection = Vector3.zero;
@@ -73,7 +73,7 @@ public class PlayerController : MonoBehaviour
 
         
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && isGameActive)
         {
             thePosition = playerCamera.transform.TransformPoint(Vector3.forward * 2);
             Instantiate(bullet, thePosition, bullet.transform.rotation);
@@ -99,14 +99,26 @@ public class PlayerController : MonoBehaviour
 
         GameOverPanel.SetActive(true);
         RestartButton.SetActive(true);
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-        lookSpeed = 0;
-        Time.timeScale = 0;
-        bullet = null;
+        DisableGame();
     }
     public void Restart()
     {
         SceneManager.LoadScene(0);
+    }
+    public void DisableGame()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        lookSpeed = 0;
+        Time.timeScale = 0;
+        isGameActive = false;
+    }
+    public void EnableGame()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        lookSpeed = 4;
+        Time.timeScale = 1;
+        isGameActive = true;
     }
 }
