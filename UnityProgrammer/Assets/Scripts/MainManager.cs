@@ -40,6 +40,7 @@ public class MainManager : MonoBehaviour
     }
     public void Exit()
     {
-        
+        player.GetComponent<PlayerController>().SetNewHighscore();
+        SceneManager.LoadScene(1);
     }
 }

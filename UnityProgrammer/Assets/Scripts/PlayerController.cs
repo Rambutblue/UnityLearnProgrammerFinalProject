@@ -39,7 +39,7 @@ public class PlayerController : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-
+        EnableGame();
     }
 
     // Update is called once per frame
@@ -100,9 +100,11 @@ public class PlayerController : MonoBehaviour
         GameOverPanel.SetActive(true);
         RestartButton.SetActive(true);
         DisableGame();
+        SetNewHighscore();
     }
     public void Restart()
     {
+        SetNewHighscore();
         SceneManager.LoadScene(0);
     }
     public void DisableGame()
@@ -120,5 +122,15 @@ public class PlayerController : MonoBehaviour
         lookSpeed = 4;
         Time.timeScale = 1;
         isGameActive = true;
+    }
+    public void SetNewHighscore()
+    {
+        MenuManager.instance.LoadData();
+        if (Slime.score > MenuManager.instance.score)
+        {
+            MenuManager.instance.score = Slime.score;
+            MenuManager.instance.playerName = MenuManager.instance.currentName;
+            MenuManager.instance.SaveData();
+        }
     }
 }
